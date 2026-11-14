@@ -29,6 +29,14 @@ public final class Book {
         Entry(String t, int p, int l) { title = t; page = p; level = l; }
     }
 
+    /** A stretch of pages that can be read as text. */
+    public static final class Sec {
+        public final String id, book, title;
+        public final int first, last;
+        Sec(String i, String b, String t, int f, int l) { id = i; book = b; title = t; first = f; last = l; }
+    }
+
+    private final List<Sec> secs = new ArrayList<>();
     private static Book inst;
     private final Context app;
     private PdfRenderer renderer;
@@ -71,7 +79,29 @@ public final class Book {
                 toc.add(new Entry(o.getString("title"), o.getInt("page"), o.optInt("level", 0)));
             }
         } catch (Exception ignored) { }
+        try {
+            JSONArray a = new JSONArray(readAsset("text/index.json"));
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject o = a.getJSONObject(i);
+                secs.add(new Sec(o.getString("id"), o.optString("book"), o.getString("title"),
+                        o.getInt("first"), o.getInt("last")));
+            }
+        } catch (Exception ignored) { }   // no text version in this build: scanned pages only
     }
+
+    /** The text section holding this page, or null if the page is only available as a scan. */
+    public Sec secFor(int page) {
+        for (Sec s : secs) if (page >= s.first && page <= s.last) return s;
+        return null;
+    }
+
+    /** The text section before (dir < 0) or after (dir > 0) the given one, or null. */
+    public Sec secNear(Sec s, int dir) {
+        int i = secs.indexOf(s) + (dir < 0 ? -1 : 1);
+        return i >= 0 && i < secs.size() ? secs.get(i) : null;
+    }
+
+    public boolean hasText() { return !secs.isEmpty(); }
 
     private static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] buf = new byte[65536];
@@ -79,7 +109,7 @@ public final class Book {
         while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
     }
 
-    private String readAsset(String name) throws IOException {
+    public String readAsset(String name) throws IOException {
         try (InputStream in = app.getAssets().open(name)) {
             ByteArrayOutputStream bo = new ByteArrayOutputStream();
             copy(in, bo);

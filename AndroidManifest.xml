@@ -15,6 +15,8 @@
         </activity>
         <activity android:name=".ReaderActivity" android:exported="false"
             android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity android:name=".TextActivity" android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity android:name=".ListScreen" android:exported="false" />
         <activity android:name=".SearchActivity" android:exported="false"
             android:windowSoftInputMode="stateVisible|adjustResize" />

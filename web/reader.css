@@ -1,0 +1,20 @@
+@font-face { font-family: Book; src: url('fonts/GentiumBookPlus-Regular.ttf'); }
+@font-face { font-family: Book; font-style: italic; src: url('fonts/GentiumBookPlus-Italic.ttf'); }
+@font-face { font-family: Book; font-weight: bold; src: url('fonts/GentiumBookPlus-Bold.ttf'); }
+html { -webkit-text-size-adjust: none; }
+body { font-family: Book, Georgia, serif; font-size: 17px; line-height: 1.6; margin: 0;
+  padding: 18px 20px 48px; background: #fbf8f1; color: #1c1b19; overflow-wrap: break-word; }
+body.night { background: #121212; color: #d8d3c7; }
+h1 { font-size: 1.45em; line-height: 1.25; text-align: center; margin: 10px 0 22px; color: #1b5e20; }
+h2 { font-size: 1.12em; text-align: center; margin: 26px 0 10px; letter-spacing: .04em; }
+h3 { font-size: 1.06em; text-align: center; margin: 24px 0 10px; color: #1b5e20; }
+.night h1, .night h3 { color: #8fce94; }
+p { margin: 0 0 .85em; }
+blockquote { margin: .2em 0 1em; padding: .1em 0 .1em .9em; border-left: 3px solid #1b5e20; }
+.night blockquote { border-left-color: #5a9a60; }
+img.ar { display: block; max-width: 100%; height: auto; margin: 16px auto; }
+.night img.ar { -webkit-filter: invert(1); filter: invert(1); }
+p.scan { text-align: center; margin: 22px 0; }
+p.scan a { display: inline-block; padding: 10px 14px; border: 1px solid #1b5e20; border-radius: 6px;
+  color: #1b5e20; text-decoration: none; }
+.night p.scan a { color: #8fce94; border-color: #5a9a60; }

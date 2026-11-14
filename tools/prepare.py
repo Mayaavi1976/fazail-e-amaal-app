@@ -43,6 +43,12 @@ except Exception as e:
     pages = []
 pages = [re.sub(r"\s+", " ", p).strip() for p in pages[:n]]
 pages += [""] * (n - len(pages))
+clean = os.path.join(out, "text", "pagetext.json")   # corrected text, when the text build ran
+if os.path.exists(clean):
+    for k, v in json.load(open(clean, encoding="utf-8")).items():
+        if 1 <= int(k) <= n and v.strip():
+            pages[int(k) - 1] = re.sub(r"\s+", " ", v).strip()
+    os.remove(clean)
 
 shutil.copyfile(pdf, os.path.join(out, "book.pdf"))
 with open(os.path.join(out, "toc.json"), "w", encoding="utf-8") as f:

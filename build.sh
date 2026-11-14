@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds FazailEAmaal.apk with the plain Android SDK tools (no Gradle).
 # Needs: ANDROID_HOME, JDK 17+, python3 + pypdf, pdftotext, zip. Book PDF at ./book.pdf
+# Optional text version: OCR_CACHE=<folder>, plus tesseract (eng+ara), pillow, pyspellchecker.
 set -euo pipefail
 cd "$(dirname "$0")"
 SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:?set ANDROID_HOME}}"
@@ -10,6 +11,14 @@ echo "build-tools: $BT"; echo "platform: $JAR"
 VC="${VERSION_CODE:-1}"
 
 rm -rf build && mkdir -p build/assets build/classes build/dex
+# Text version: needs the OCR cache made by tools/text/ocr.py (see README). Without it the
+# app is built with scanned pages only.
+if [ -n "${OCR_CACHE:-}" ] && [ -d "$OCR_CACHE" ]; then
+  python3 tools/text/build.py book.pdf "$OCR_CACHE" build/assets/text
+  mkdir -p build/assets/fonts
+  cp fonts/*.ttf build/assets/fonts/
+  cp web/reader.css web/reader.js build/assets/
+fi
 python3 tools/prepare.py book.pdf build/assets
 
 "$BT/aapt2" compile --dir res -o build/res.zip

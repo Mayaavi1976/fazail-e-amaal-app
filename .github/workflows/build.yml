@@ -19,16 +19,35 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq poppler-utils zip
-          pip install pypdf
+          sudo apt-get install -y -qq poppler-utils zip tesseract-ocr tesseract-ocr-ara
+          pip install pypdf pillow pyspellchecker
       - name: Get the book PDF
         run: |
           if [ ! -f book.pdf ]; then
             curl -fL --retry 3 -A "Mozilla/5.0" -o book.pdf "$PDF_URL"
           fi
           ls -la book.pdf
+      - name: Compile check
+        run: |
+          JAR="$(ls -d "$ANDROID_HOME"/platforms/android-[0-9]* | sort -V | tail -1)/android.jar"
+          mkdir -p /tmp/cc
+          javac --release 8 -cp "$JAR" -Xlint:-options -nowarn -d /tmp/cc $(find src -name '*.java')
+      - name: Restore OCR cache
+        id: ocr
+        uses: actions/cache/restore@v4
+        with:
+          path: ocrcache/*.tsv
+          key: ocr-${{ hashFiles('book.pdf', 'tools/text/ocr.py') }}
+      - name: Read the scanned pages (OCR, about 15 minutes the first time)
+        run: python3 tools/text/ocr.py book.pdf ocrcache 1 all
+      - name: Save OCR cache
+        if: steps.ocr.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ocrcache/*.tsv
+          key: ocr-${{ hashFiles('book.pdf', 'tools/text/ocr.py') }}
       - name: Build
-        run: VERSION_CODE=${{ github.run_number }} ./build.sh
+        run: VERSION_CODE=${{ github.run_number }} OCR_CACHE=ocrcache ./build.sh
       - uses: actions/upload-artifact@v4
         with:
           name: FazailEAmaal-apk

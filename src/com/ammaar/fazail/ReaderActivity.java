@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ReaderActivity extends Activity {
-    private static final int M_MARK = 1, M_NIGHT = 2, M_CONTENTS = 3, M_SEARCH = 4, M_GOTO = 5, M_MARKS = 6;
+    private static final int M_MARK = 1, M_NIGHT = 2, M_CONTENTS = 3, M_SEARCH = 4, M_GOTO = 5, M_MARKS = 6, M_TEXT = 7;
     private Book book;
     private ZoomImageView view;
     private TextView label;
@@ -151,6 +151,7 @@ public class ReaderActivity extends Activity {
         menu.add(0, M_SEARCH, 3, "Search");
         menu.add(0, M_GOTO, 4, "Go to page");
         menu.add(0, M_MARKS, 5, "Bookmarks");
+        if (book != null && book.hasText()) menu.add(0, M_TEXT, 0, "Read as text");
         updateMark();
         return true;
     }
@@ -163,6 +164,10 @@ public class ReaderActivity extends Activity {
                 Toast.makeText(this, on ? "Page " + page + " bookmarked" : "Bookmark removed",
                         Toast.LENGTH_SHORT).show();
                 updateMark();
+                return true;
+            case M_TEXT:
+                if (book.secFor(page) != null) Ui.open(this, page);
+                else Toast.makeText(this, "This page is only available as a scan", Toast.LENGTH_SHORT).show();
                 return true;
             case M_NIGHT:
                 Book.setNight(this, !Book.night(this));

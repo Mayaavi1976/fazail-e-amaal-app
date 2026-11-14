@@ -29,7 +29,18 @@ final class Ui {
         return Math.round(v * c.getResources().getDisplayMetrics().density);
     }
 
+    /** Opens a page as text when a text version exists, otherwise as the scanned page. */
     static void open(Context c, int page) {
+        boolean text = false;
+        try { text = Book.get(c).secFor(page) != null; } catch (Exception ignored) { }
+        if (!text) { openScan(c, page); return; }
+        Intent i = new Intent(c, TextActivity.class);
+        i.putExtra("page", page);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        c.startActivity(i);
+    }
+
+    static void openScan(Context c, int page) {
         Intent i = new Intent(c, ReaderActivity.class);
         i.putExtra("page", page);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

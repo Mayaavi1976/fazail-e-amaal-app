@@ -87,8 +87,11 @@ public class MainActivity extends Activity {
                 default:
                     new AlertDialog.Builder(this).setTitle("Fazail-e-Amaal")
                             .setMessage("Offline reader for the English edition of Fazail-e-Amaal.\n\n"
-                                    + "Swipe left or right to turn pages, pinch or double-tap to zoom. "
-                                    + "Use the menu to bookmark a page, search the text, or switch to night mode.")
+                                    + "The book opens as text you can resize from the menu; Arabic passages are shown "
+                                    + "exactly as printed. The text was read from the scan by machine and corrected "
+                                    + "automatically, so a few mistakes may remain: use \"Show scanned page\" in the "
+                                    + "menu to check any line against the original.\n\n"
+                                    + "In the scanned view, swipe to turn pages and pinch or double-tap to zoom.")
                             .setPositiveButton("OK", null).show();
             }
         });
