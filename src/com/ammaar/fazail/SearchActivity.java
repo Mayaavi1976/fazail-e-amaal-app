@@ -29,7 +29,7 @@ public class SearchActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        Ui.style(this, "Search");
+        Ui.style(this, L.t("Search"));
         try {
             book = Book.get(this);
         } catch (Exception e) {
@@ -42,13 +42,13 @@ public class SearchActivity extends Activity {
         LinearLayout row = new LinearLayout(this);
         row.setPadding(p, p, p, 0);
         box = new EditText(this);
-        box.setHint("Word or phrase");
+        box.setHint(L.t("Word or phrase"));
         box.setSingleLine(true);
         box.setInputType(InputType.TYPE_CLASS_TEXT);
         box.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         row.addView(box, new LinearLayout.LayoutParams(0, -2, 1));
         Button go = new Button(this);
-        go.setText("Search");
+        go.setText(L.t("Search"));
         row.addView(go);
         root.addView(row);
         info = new TextView(this);
@@ -69,10 +69,10 @@ public class SearchActivity extends Activity {
 
     private void search() {
         final String q = box.getText().toString().trim().toLowerCase(Locale.ROOT);
-        if (q.length() < 2) { info.setText("Type at least 2 characters."); return; }
+        if (q.length() < 2) { info.setText(L.t("Type at least 2 characters.")); return; }
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (imm != null) imm.hideSoftInputFromWindow(box.getWindowToken(), 0);
-        info.setText("Searching...");
+        info.setText(L.t("Searching..."));
         final int mine = ++run;
         new Thread(() -> {
             final List<String> rows = new ArrayList<>();
@@ -92,7 +92,7 @@ public class SearchActivity extends Activity {
                 // lower-casing can change length for a few characters; clamp to stay safe
                 int s = Math.max(0, Math.min(at, t.length()) - 60);
                 int e = Math.min(t.length(), at + q.length() + 80);
-                rows.add("Page " + (i + 1) + "\n" + (s > 0 ? "..." : "") + t.substring(s, e)
+                rows.add(L.t("Page ") + (i + 1) + "\n" + (s > 0 ? "..." : "") + t.substring(s, e)
                         + (e < t.length() ? "..." : ""));
                 pgs.add(i + 1);
             }
@@ -103,9 +103,9 @@ public class SearchActivity extends Activity {
                 pageOf.clear();
                 pageOf.addAll(pgs);
                 list.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, rows));
-                if (!has) info.setText("This book's pages are images, so the text cannot be searched.");
-                else if (total == 0) info.setText("No results found.");
-                else info.setText(total + " page" + (total == 1 ? "" : "s") + " found"
+                if (!has) info.setText(L.t("This book's pages are images, so the text cannot be searched."));
+                else if (total == 0) info.setText(L.t("No results found."));
+                else info.setText(L.ta ? total + " பக்கங்களில் கிடைத்தது" + (total > MAX ? " (முதல் " + MAX + " காட்டப்படுகிறது)" : "") : total + " page" + (total == 1 ? "" : "s") + " found"
                             + (total > MAX ? " (showing first " + MAX + ")" : ""));
             });
         }).start();

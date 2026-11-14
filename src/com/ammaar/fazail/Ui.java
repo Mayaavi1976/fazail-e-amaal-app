@@ -17,6 +17,7 @@ final class Ui {
     interface PageCallback { void go(int page); }
 
     static void style(Activity a, String title) {
+        L.ta = "ta".equals(Book.prefs(a).getString("lang", "en"));
         a.getWindow().setStatusBarColor(GREEN_DARK);
         ActionBar bar = a.getActionBar();
         if (bar != null) {
@@ -56,16 +57,16 @@ final class Ui {
         box.setPadding(p, dp(a, 8), p, 0);
         box.addView(in);
         new AlertDialog.Builder(a)
-                .setTitle("Go to page")
+                .setTitle(L.t("Go to page"))
                 .setView(box)
-                .setPositiveButton("Go", (d, w) -> {
+                .setPositiveButton(L.t("Go"), (d, w) -> {
                     try {
                         int n = Integer.parseInt(in.getText().toString().trim());
                         if (n >= 1 && n <= max) { cb.go(n); return; }
                     } catch (NumberFormatException ignored) { }
-                    Toast.makeText(a, "Enter a page from 1 to " + max, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(a, (L.ta ? "1 முதல் " + max + " வரையிலான பக்க எண்ணை உள்ளிடவும்" : "Enter a page from 1 to " + max), Toast.LENGTH_SHORT).show();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(L.t("Cancel"), null)
                 .show();
     }
 }

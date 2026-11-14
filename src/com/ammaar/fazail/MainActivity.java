@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
         root.addView(head);
 
         status = new TextView(this);
-        status.setText("Preparing the book...");
+        status.setText(L.t("Preparing the book..."));
         status.setTextColor(0xFFE8F5E9);
         status.setGravity(Gravity.CENTER);
         status.setBackgroundColor(Ui.GREEN);
@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
                 final Book bk = Book.get(this);
                 runOnUiThread(() -> { book = bk; refresh(); });
             } catch (final Throwable e) {
-                runOnUiThread(() -> status.setText("Could not open the book: " + e));
+                runOnUiThread(() -> status.setText(L.t("Could not open the book: ") + e));
             }
         }).start();
     }
@@ -64,16 +64,17 @@ public class MainActivity extends Activity {
 
     private void refresh() {
         int last = Math.min(Book.lastPage(this), book.pageCount());
-        status.setText("English  -  " + book.pageCount() + " pages");
+        status.setText(L.ta ? "ஆங்கிலம்  -  " + book.pageCount() + " பக்கங்கள்" : "English  -  " + book.pageCount() + " pages");
         String sec = book.titleFor(last);
         String[] items = {
-                "Continue reading  -  page " + last + (sec.isEmpty() ? "" : "\n" + sec),
-                "Contents",
-                "Go to page",
-                "Search",
-                "Bookmarks (" + Book.bookmarks(this).size() + ")",
-                "Night mode: " + (Book.night(this) ? "On" : "Off"),
-                "About"
+                L.t("Continue reading  -  page ") + last + (sec.isEmpty() ? "" : "\n" + sec),
+                L.t("Contents"),
+                L.t("Go to page"),
+                L.t("Search"),
+                L.t("Bookmarks (") + Book.bookmarks(this).size() + ")",
+                L.t("Night mode: ") + (Book.night(this) ? L.t("On") : L.t("Off")),
+                "Language / மொழி: " + (L.ta ? "தமிழ்" : "English"),
+                L.t("About")
         };
         list.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
         list.setOnItemClickListener((av, v, pos, id) -> {
@@ -84,15 +85,14 @@ public class MainActivity extends Activity {
                 case 3: startActivity(new Intent(this, SearchActivity.class)); break;
                 case 4: startActivity(new Intent(this, ListScreen.class).putExtra("mode", "bookmarks")); break;
                 case 5: Book.setNight(this, !Book.night(this)); refresh(); break;
+                case 6:
+                    Book.prefs(this).edit().putString("lang", L.ta ? "en" : "ta").apply();
+                    recreate();
+                    break;
                 default:
                     new AlertDialog.Builder(this).setTitle("Fazail-e-Amaal")
-                            .setMessage("Offline reader for the English edition of Fazail-e-Amaal.\n\n"
-                                    + "The book opens as text you can resize from the menu; Arabic passages are shown "
-                                    + "exactly as printed. The text was read from the scan by machine and corrected "
-                                    + "automatically, so a few mistakes may remain: use \"Show scanned page\" in the "
-                                    + "menu to check any line against the original.\n\n"
-                                    + "In the scanned view, swipe to turn pages and pinch or double-tap to zoom.")
-                            .setPositiveButton("OK", null).show();
+                            .setMessage(L.ta ? L.ABOUT_TA : L.ABOUT_EN)
+                            .setPositiveButton(L.t("OK"), null).show();
             }
         });
     }

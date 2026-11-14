@@ -27,7 +27,7 @@ public class ListScreen extends Activity {
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         bookmarks = "bookmarks".equals(getIntent().getStringExtra("mode"));
-        Ui.style(this, bookmarks ? "Bookmarks" : "Contents");
+        Ui.style(this, bookmarks ? L.t("Bookmarks") : L.t("Contents"));
         try {
             book = Book.get(this);
         } catch (Exception e) {
@@ -41,8 +41,8 @@ public class ListScreen extends Activity {
         int p = Ui.dp(this, 32);
         empty.setPadding(p, p, p, p);
         empty.setText(bookmarks
-                ? "No bookmarks yet.\nOpen a page and tap the star to add one."
-                : "This book has no contents list.");
+                ? L.t("No bookmarks yet.\nOpen a page and tap the star to add one.")
+                : L.t("This book has no contents list."));
         empty.setVisibility(View.GONE);
         android.widget.FrameLayout root = new android.widget.FrameLayout(this);
         root.addView(list);
@@ -53,7 +53,7 @@ public class ListScreen extends Activity {
         if (bookmarks) {
             list.setOnItemLongClickListener((av, v, pos, id) -> {
                 Book.toggleBookmark(this, pageOf.get(pos));
-                Toast.makeText(this, "Bookmark removed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, L.t("Bookmark removed"), Toast.LENGTH_SHORT).show();
                 load();
                 return true;
             });
@@ -71,7 +71,7 @@ public class ListScreen extends Activity {
         if (bookmarks) {
             for (int pg : Book.bookmarks(this)) {
                 String sec = book.titleFor(pg);
-                labels.add("Page " + pg + (sec.isEmpty() ? "" : "\n" + sec));
+                labels.add(L.t("Page ") + pg + (sec.isEmpty() ? "" : "\n" + sec));
                 pageOf.add(pg); levelOf.add(0);
             }
         } else {

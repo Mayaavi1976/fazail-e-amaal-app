@@ -35,7 +35,7 @@ public class TextActivity extends Activity {
         try {
             book = Book.get(this);
         } catch (Exception e) {
-            Toast.makeText(this, "Could not open the book", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, L.t("Could not open the book"), Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -60,10 +60,10 @@ public class TextActivity extends Activity {
         bar = new LinearLayout(this);
         bar.setGravity(Gravity.CENTER_VERTICAL);
         Button prev = new Button(this);
-        prev.setText("< Prev");
+        prev.setText(L.t("< Prev"));
         prev.setOnClickListener(v -> step(-1));
         Button next = new Button(this);
-        next.setText("Next >");
+        next.setText(L.t("Next >"));
         next.setOnClickListener(v -> step(1));
         label = new TextView(this);
         label.setGravity(Gravity.CENTER);
@@ -95,7 +95,7 @@ public class TextActivity extends Activity {
     private void step(int dir) {
         Book.Sec s = book.secNear(sec, dir);
         if (s == null) {
-            Toast.makeText(this, dir < 0 ? "This is the first section" : "This is the last section",
+            Toast.makeText(this, dir < 0 ? L.t("This is the first section") : L.t("This is the last section"),
                     Toast.LENGTH_SHORT).show();
         } else {
             show(s.first);
@@ -136,7 +136,7 @@ public class TextActivity extends Activity {
     }
 
     private void updateLabel() {
-        label.setText(sec.title + "\nPage " + page + " of " + book.pageCount());
+        label.setText(sec.title + "\n" + L.t("Page ") + page + L.t(" of ") + book.pageCount());
         if (markItem != null) markItem.setTitle(Book.bookmarks(this).contains(page) ? "★" : "☆");
     }
 
@@ -156,14 +156,14 @@ public class TextActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         markItem = menu.add(0, M_MARK, 0, "☆");
         markItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0, M_BIG, 1, "Bigger text");
-        menu.add(0, M_SMALL, 2, "Smaller text");
-        menu.add(0, M_NIGHT, 3, "Night mode");
-        menu.add(0, M_SCAN, 4, "Show scanned page");
-        menu.add(0, M_CONTENTS, 5, "Contents");
-        menu.add(0, M_SEARCH, 6, "Search");
-        menu.add(0, M_GOTO, 7, "Go to page");
-        menu.add(0, M_MARKS, 8, "Bookmarks");
+        menu.add(0, M_BIG, 1, L.t("Bigger text"));
+        menu.add(0, M_SMALL, 2, L.t("Smaller text"));
+        menu.add(0, M_NIGHT, 3, L.t("Night mode"));
+        menu.add(0, M_SCAN, 4, L.t("Show scanned page"));
+        menu.add(0, M_CONTENTS, 5, L.t("Contents"));
+        menu.add(0, M_SEARCH, 6, L.t("Search"));
+        menu.add(0, M_GOTO, 7, L.t("Go to page"));
+        menu.add(0, M_MARKS, 8, L.t("Bookmarks"));
         if (sec != null) updateLabel();
         return true;
     }
@@ -173,7 +173,7 @@ public class TextActivity extends Activity {
         switch (it.getItemId()) {
             case M_MARK:
                 boolean on = Book.toggleBookmark(this, page);
-                Toast.makeText(this, on ? "Page " + page + " bookmarked" : "Bookmark removed",
+                Toast.makeText(this, on ? L.t("Page ") + page + L.t(" bookmarked") : L.t("Bookmark removed"),
                         Toast.LENGTH_SHORT).show();
                 updateLabel();
                 return true;

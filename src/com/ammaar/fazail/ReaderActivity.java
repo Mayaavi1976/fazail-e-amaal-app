@@ -35,7 +35,7 @@ public class ReaderActivity extends Activity {
         try {
             book = Book.get(this);
         } catch (Exception e) {
-            Toast.makeText(this, "Could not open the book", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, L.t("Could not open the book"), Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -51,10 +51,10 @@ public class ReaderActivity extends Activity {
         bar = new LinearLayout(this);
         bar.setGravity(Gravity.CENTER_VERTICAL);
         Button prev = new Button(this);
-        prev.setText("< Prev");
+        prev.setText(L.t("< Prev"));
         prev.setOnClickListener(v -> show(page - 1));
         Button next = new Button(this);
-        next.setText("Next >");
+        next.setText(L.t("Next >"));
         next.setOnClickListener(v -> show(page + 1));
         label = new TextView(this);
         label.setGravity(Gravity.CENTER);
@@ -102,13 +102,13 @@ public class ReaderActivity extends Activity {
 
     private void show(int p) {
         if (p < 1 || p > book.pageCount()) {
-            Toast.makeText(this, p < 1 ? "This is the first page" : "This is the last page",
+            Toast.makeText(this, p < 1 ? L.t("This is the first page") : L.t("This is the last page"),
                     Toast.LENGTH_SHORT).show();
             return;
         }
         page = p;
         Book.setLastPage(this, p);
-        label.setText("Page " + p + " / " + book.pageCount());
+        label.setText(L.t("Page ") + p + " / " + book.pageCount());
         String sec = book.titleFor(p);
         if (getActionBar() != null) getActionBar().setTitle(sec.isEmpty() ? "Fazail-e-Amaal" : sec);
         updateMark();
@@ -146,12 +146,12 @@ public class ReaderActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         markItem = menu.add(0, M_MARK, 0, "☆");
         markItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0, M_NIGHT, 1, "Night mode");
-        menu.add(0, M_CONTENTS, 2, "Contents");
-        menu.add(0, M_SEARCH, 3, "Search");
-        menu.add(0, M_GOTO, 4, "Go to page");
-        menu.add(0, M_MARKS, 5, "Bookmarks");
-        if (book != null && book.hasText()) menu.add(0, M_TEXT, 0, "Read as text");
+        menu.add(0, M_NIGHT, 1, L.t("Night mode"));
+        menu.add(0, M_CONTENTS, 2, L.t("Contents"));
+        menu.add(0, M_SEARCH, 3, L.t("Search"));
+        menu.add(0, M_GOTO, 4, L.t("Go to page"));
+        menu.add(0, M_MARKS, 5, L.t("Bookmarks"));
+        if (book != null && book.hasText()) menu.add(0, M_TEXT, 0, L.t("Read as text"));
         updateMark();
         return true;
     }
@@ -161,13 +161,13 @@ public class ReaderActivity extends Activity {
         switch (it.getItemId()) {
             case M_MARK:
                 boolean on = Book.toggleBookmark(this, page);
-                Toast.makeText(this, on ? "Page " + page + " bookmarked" : "Bookmark removed",
+                Toast.makeText(this, on ? L.t("Page ") + page + L.t(" bookmarked") : L.t("Bookmark removed"),
                         Toast.LENGTH_SHORT).show();
                 updateMark();
                 return true;
             case M_TEXT:
                 if (book.secFor(page) != null) Ui.open(this, page);
-                else Toast.makeText(this, "This page is only available as a scan", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(this, L.t("This page is only available as a scan"), Toast.LENGTH_SHORT).show();
                 return true;
             case M_NIGHT:
                 Book.setNight(this, !Book.night(this));
