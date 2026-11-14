@@ -70,7 +70,7 @@ CONFUSE = [("i", "l"), ("l", "i"), ("t", "l"), ("l", "t"), ("1", "l"), ("I", "l"
            ("e", "c"), ("o", "a"), ("a", "o"), ("u", "n"), ("n", "u"), ("h", "b"), ("b", "h"),
            ("rn", "m"), ("m", "rn"), ("cl", "d"), ("vv", "w"), ("0", "o"), ("5", "s"),
            ("J", "l"), ("]", "l"), ("g", "q"), ("gq", "q"), ("e", "a"), ("f", "t"), ("t", "f"),
-           ("g", "o"), ("v", "y"), ("y", "v")]
+           ("g", "o"), ("v", "y"), ("y", "v"), ("t", "r")]
 
 def unconfuse(w):
     """A single look-alike substitution that turns a non-word into a known word."""
@@ -232,7 +232,7 @@ def analyse(p, notes):
         return dict(p=p, items=[], toc=False)
     vote(text, p, notes)
     leaders = sum(1 for l in text if re.search(r"\.{3,}|(\. ){3,}|\s\d{1,3}$", " ".join(a["t"] for a in l["w"])))
-    if len(text) >= 8 and leaders >= 0.4 * len(text):
+    if leaders >= 6 and leaders >= 0.3 * len(text):
         return dict(p=p, items=[], toc=True)            # a printed table of contents
 
     longs = [l for l in text if len(l["w"]) >= 6 and l["c"] >= 70] or text or pics
@@ -262,7 +262,7 @@ def analyse(p, notes):
         top = max([l["y2"] for l in text[:g["key"]]][-1:] + [int(head_y)]) + 2
         bot = min([l["y"] for l in text[g["key"]:]][:1] + [H - 40]) - 2
         top, bot = min(top, g["y"]), max(bot, g["y2"])
-        x0, x1 = int(max(tabl, gl - 60, 0)), int(min(tabx, gr + 60, W))
+        x0, x1 = int(max(tabl, gl - 34, 0)), int(min(tabx, gr + 34, W))
         if x1 - x0 < 60 or bot - top < 14:
             continue
         bb = ink.crop((x0, top, x1, bot)).getbbox()
@@ -426,6 +426,11 @@ def tidy(t, notes, where):
         i += 1
     t = " ".join(toks)
     t = re.sub(r"\bQO\b", "O", t)
+    t = t.replace("((", "(").replace("))", ")")
+    t = re.sub(r"\b([a-z]+)!(?= [a-z])", r"\1", t)                    # cannot! do
+    if "]" not in t:
+        t = re.sub(r"\[(?=[A-Za-z])", "", t)                          # [Imaan
+    t = re.sub(r"\b(CHAPTER|Chapter|PART|Part) [JiIl1|](?=$|[\s:.,])", r"\1 I", t)
     t = re.sub(r'(^|[\s"])Q,', r"\1O,", t)
     t = re.sub(r"(?<![\w.:])(?:1|l|\]|J|T)(?= [a-z])", "I", t)       # stand-alone I
     t = re.sub(r"\b(\w*ll)[\]!](?= [a-z])", r"\1", t)                 # will] shall!
@@ -471,7 +476,7 @@ def sections():
         last = (toc[i + 1]["page"] - 1) if i + 1 < len(toc) else n
         if e["level"] == 0:
             book = e["title"]
-        skip = e["title"].startswith(("Contents", "Title page")) or \
+        skip = e["title"].startswith(("Contents", "Title page", "Glossary")) or \
             (e["level"] == 0 and last - e["page"] < 3)
         if not skip and last >= e["page"]:
             out_.append(dict(id="s%04d" % e["page"], book=book, title=e["title"],
